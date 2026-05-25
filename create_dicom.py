@@ -106,7 +106,7 @@ def create_dicom(x, filename, sp, sz=None, f=1, study_uid=None, series_uid=None,
 	if x.dtype != np.uint16:
 		x = x.astype(np.uint16)
 
-	ds.PixelData = x.tostring()
+	ds.PixelData = x.tobytes()
 
 	# write final file with this metadata
 	ds.save_as(full_filename, write_like_original=False)
