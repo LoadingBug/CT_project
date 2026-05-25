@@ -5,7 +5,7 @@ from ramp_filter import *
 from back_project import *
 from hu import *
 
-def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, alpha=0.001):
+def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, alpha=0.001, scatterfrac = 0.0, backgroundrate = 0.0):
 
 	""" Simulation of the CT scanning process
 		reconstruction = scan_and_reconstruct(photons, material, phantom, scale, angles, mas, alpha)
@@ -16,21 +16,20 @@ def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, a
 
 
 	# convert source (photons per (mas, cm^2)) to photons
-	photons = photons*mas*(scale**2)
+	photons = photons * mas * scale**2
+
+	# model noise
+	photons += scale **2 * np.random.poisson(scatterfrac * photons) # scatter noise
+	photons += scale **2 * np.random.poisson(backgroundrate, size = photons.shape) # background noise
 
 	# create sinogram from phantom data, with received detector values
-	scan = ct_scan(photons, material, phantom, scale, angles, 1,  mas)
-
+	sinogram = ct_scan(photons, material, phantom, scale, angles)
 	# convert detector values into calibrated attenuation values
-	cal = ct_calibrate(photons, material, scan, scale)
-
+	sinogram_attenuation = ct_calibrate(photons, material, sinogram, scale)
 	# Ram-Lak
-	filt_cal = ramp_filter(cal, scale, alpha)
-
+	fs = ramp_filter(sinogram_attenuation, scale, alpha)
 	# Back-projection
-	bp = back_project(filt_cal)
-
+	reconstruction = back_project(fs)
 	# convert to Hounsfield Units
-	reconstruction = hu(photons, material, bp, scale)
-
+	reconstruction = hu(photons, material, reconstruction, scale)
 	return reconstruction

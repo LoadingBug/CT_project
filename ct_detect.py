@@ -58,6 +58,11 @@ def ct_detect(p, coeffs, thickness, mas=10000):
 	detector_photons = np.sum(detector_photons, axis=0)
 
 	# model noise
+	detector_photons *= mas # actual photons
+	detector_photons = np.random.normal(detector_photons, np.sqrt(detector_photons)) # quantum noise
+	detector_photons = detector_photons / mas
+
+
 
 	# minimum detection is one photon
 	detector_photons = np.clip(detector_photons, 1, None)
