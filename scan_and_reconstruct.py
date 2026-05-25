@@ -30,6 +30,6 @@ def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, a
 	fs = ramp_filter(sinogram_attenuation, scale, alpha)
 	# Back-projection
 	reconstruction = back_project(fs)
-	# convert to Hounsfield Units dunk!
+	# convert to Hounsfield Units
 	reconstruction = hu(photons, material, reconstruction, scale)
 	return reconstruction 
