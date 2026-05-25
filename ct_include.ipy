@@ -2,6 +2,7 @@
 #use this command in ipython terminal to setup lab
 # `%run ct_include.ipy`
 
+# super duper group
 #######import files - add new python imports here#######
 import matplotlib.pyplot as plt
 import numpy.matlib
