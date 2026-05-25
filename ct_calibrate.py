@@ -17,7 +17,8 @@ def ct_calibrate(photons, material, sinogram, scale):
 	# length (has to be the same as in ct_scan.py)
 	n = sinogram.shape[1]
 	phantom = ct_phantom(material.name, n, 1, 'Air')
-	sinogram_air = ct_scan(photons, material, phantom, scale, sinogram.shape[0])
+	sinogram_air = ct_scan(photons, material, phantom, scale, 1)
+	sinogram_air = sinogram_air[0][0]
 
 	# perform calibration
 	sinogram = sinogram / sinogram_air
