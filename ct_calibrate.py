@@ -47,12 +47,8 @@ def ct_calibrate(photons, material, sinogram, scale, correct_beam_hardening=True
 
     # Fit a function t_w = f(p_w) using scipy's 1D interpolation
     f_interp = interpolate.interp1d(p_w, t_w, bounds_error=False, fill_value="extrapolate")
-
-    # Apply the function to the measured data to find the equivalent water thickness
     t_w_m = f_interp(p_m)
 
-    # Scale by C so that p approx p_m at a low thickness
-    # We grab a small step from our interpolation data (index 1) to find the initial linear slope
     C = p_w[1] / t_w[1]
 
     # Calculate the final calibrated attenuation

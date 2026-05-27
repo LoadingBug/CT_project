@@ -109,6 +109,18 @@ def ct_phantom(names, n, type, metal=None):
 			angles = angles[angles < (math.pi * 2)]
 			for a in angles:
 				x[int(round(n / 2 + r * math. cos(a)))][int(round(n / 2 + r * math.sin(a)))] = nmetal
+
+	elif type == 9:
+		
+		# impulse for looking at resolution (different position)
+		x = np.zeros((n, n))
+		x[int(n / 3)][int(n / 3)] = tissue
+
+	elif type == 10:
+		
+		# impulse for looking at resolution (different position)
+		x = np.zeros((n, n))
+		x[int(3*n / 4)][int(3*n/4)] = tissue
 		
 	else:
 		

@@ -59,22 +59,12 @@ def test_3():
 
 	# how to check whether these results are actually correct?
 
-def test_4():
-	# calibrated sinogram for phantom input 3 - single large hip replacement
-
-    p = ct_phantom(material.name, 256, 3, 'Air')
+def test():
+    p = ct_phantom(material.name, 256, 3, 'Water')
     y = ct_scan(source.photon('100kVp, 2mm Al'), material, p, 0.1, 256)
     sinogram = ct_calibrate(source.photon('100kVp, 2mm Al'), material, y, 0.1)
 
-    save_draw(sinogram, 'results', 'test_4_image')
-    
-def test_5():
-	# scan_and_reconstruct test, alpha = 0
-
-    M = ct_phantom(material.name, 256, 2,'Titanium')
-    ct = scan_and_reconstruct(source.photon('80kVp, 2mm Al'), material, M, 0.1,256)
-    
-    save_draw(ct, 'results', 'test_5_image')
+    save_draw(sinogram, 'results', 'sinogram_hip')
 
 # Run the various tests
 # print('Test 1')
@@ -83,8 +73,6 @@ def test_5():
 # test_2()
 # print('Test 3')
 # test_3()
-# print('Test 4')
-# test_4()
 
-print('Test 5')
-test_5()
+print('Test')
+test()
