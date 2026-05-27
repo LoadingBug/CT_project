@@ -24,7 +24,7 @@ def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, a
 	n = sinogram.shape[1]
 	phantom = ct_phantom(material.name, n, 1, 'Air')
 	sinogram_air = ct_scan(photons, material, phantom, scale, 1)
-	sinogram_air = sinogram_air[0][0]
+	sinogram_air = np.mean(sinogram_air[0])
 	mean_scatter = scatterfrac * sinogram_air
 
 	sinogram += np.random.poisson(mean_scatter) + np.random.poisson(backgroundrate * scale ** 2)
