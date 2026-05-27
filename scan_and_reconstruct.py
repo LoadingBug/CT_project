@@ -5,7 +5,8 @@ from ramp_filter import *
 from back_project import *
 from hu import *
 
-def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, alpha=0.001):
+def scan_and_reconstruct(photons, material, phantom, scale,
+                         angles, correct_beam_hardening=True, mas=10000, alpha=0.001):
 
 	""" Simulation of the CT scanning process
 		reconstruction = scan_and_reconstruct(photons, material, phantom, scale, angles, mas, alpha)
@@ -22,7 +23,7 @@ def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, a
 	scan = ct_scan(photons, material, phantom, scale, angles, 1,  mas)
 
 	# convert detector values into calibrated attenuation values
-	cal = ct_calibrate(photons, material, scan, scale)
+	cal = ct_calibrate(photons, material, scan, scale, correct_beam_hardening)
 
 	# Ram-Lak
 	filt_cal = ramp_filter(cal, scale, alpha)

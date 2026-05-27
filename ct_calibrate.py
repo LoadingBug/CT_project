@@ -3,8 +3,9 @@ import scipy
 from scipy import interpolate
 from ct_phantom import ct_phantom
 from ct_scan import ct_scan
+from ct_detect import ct_detect
 
-def ct_calibrate(photons, material, sinogram, scale):
+def ct_calibrate(photons, material, sinogram, scale, correct_beam_hardening=True):
 
 	""" ct_calibrate convert CT detections to linearised attenuation
 	sinogram = ct_calibrate(photons, material, sinogram, scale) takes the CT detection sinogram
@@ -20,8 +21,34 @@ def ct_calibrate(photons, material, sinogram, scale):
 	sinogram_air = ct_scan(photons, material, phantom, scale, 1)
 	sinogram_air = sinogram_air[0][0]
 
-	# perform calibration
+	# Perform calibration
 	sinogram = sinogram / sinogram_air
-	sinogram = -np.log(sinogram)
+	p_m = -np.log(sinogram)
 
-	return sinogram
+	if not correct_beam_hardening:
+		return p_m
+
+	# Initialise water thickness values for calibration
+	n = sinogram.shape[1]
+	max_thickness = n * scale
+	t_w = np.linspace(0, max_thickness, 100)
+	
+	# Use water to calibrate
+	I_0 = ct_detect(photons, material.coeff('Water'), 0)
+	I = ct_detect(photons, material.coeff('Water'), t_w)
+    
+    # Attenuation for water measured as usual (without beam hardening correction)
+	p_w = -np.log(np.maximum(I / I_0, 1e-10))
+    
+	f = interpolate.interp1d(p_w, t_w, kind='linear', bounds_error=False, fill_value="extrapolate")
+        
+    # Calculate expected equivalent water thickness using interpolated function of material attenuation values
+	t_wm = f(p_m)
+    
+    # Calculate scaling factor by fitting constant function to datapoints C = p/t_{w,m}
+	C = p_m[1] / t_wm[1]
+    
+    # Scale for beam hardening corrected attenuation
+	p_m = C * t_wm
+
+	return p_m

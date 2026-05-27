@@ -1,0 +1,36 @@
+import numpy as np
+from material import *
+from source import *
+from fake_source import *
+from ct_phantom import *
+from ct_lib import *
+from scan_and_reconstruct import *
+from create_dicom import *
+
+material = Material()
+source = Source()
+
+def test_default():
+    M = ct_phantom(material.name, 256, 1,'Water')
+    ct = scan_and_reconstruct(source.photon('80kVp, 2mm Al'), material, M, 0.1,256)
+    draw(ct, caxis = [0, None])
+    
+# print('Test default')
+# test_default()
+
+def test_fake():
+    M = ct_phantom(material.name, 256, 1,'Water')
+    ct = scan_and_reconstruct(fake_source(source.mev, 0.08, method='ideal'), material, M, 0.1,256)
+    draw(ct, caxis=[0, None])
+    
+# print('Test fake source')
+# test_fake()
+
+def test_beam_hardening():
+    for material_name in ['Water']:
+        phantom = ct_phantom(material.name, 256, 1, material_name)
+        calib_with_correction = scan_and_reconstruct(source.photon('100kVp, 2mm Al'), material, phantom, 0.1, 256, 10000, 0.001)
+        draw(calib_with_correction)
+
+print('Test beam hardening')
+test_beam_hardening()

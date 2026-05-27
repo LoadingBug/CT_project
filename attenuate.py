@@ -38,8 +38,8 @@ def attenuate(original_energy, coeff, thickness):
 	if len(thickness) != samples:
 		raise ValueError('input thickness has different number of samples to input original_energy')
 
-	# Work out residual energy for each thickness and at each energy
+	# Work out residual energy and attenuation
 	attenuation = np.exp(-coeff[:, None] * thickness[None, :])
 	residual_energy = original_energy*attenuation
-	
+
 	return residual_energy
