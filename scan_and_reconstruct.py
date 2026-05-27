@@ -5,7 +5,7 @@ from ramp_filter import *
 from back_project import *
 from hu import *
 
-def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, alpha=0.001, scatterfrac = 0.0, backgroundrate = 0.0):
+def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, alpha=0.001, scatterfrac = 0.001, backgroundrate = 1000.0):
 
 	""" Simulation of the CT scanning process
 		reconstruction = scan_and_reconstruct(photons, material, phantom, scale, angles, mas, alpha)
@@ -16,14 +16,19 @@ def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, a
 
 
 	# convert source (photons per (mas, cm^2)) to photons
-	photons = photons * mas * scale**2
-
-	# model noise
-	photons += scale **2 * np.random.poisson(scatterfrac * photons) # scatter noise
-	photons += scale **2 * np.random.poisson(backgroundrate, size = photons.shape) # background noise
+	photons = photons * mas * scale ** 2
 
 	# create sinogram from phantom data, with received detector values
 	sinogram = ct_scan(photons, material, phantom, scale, angles)
+
+	n = sinogram.shape[1]
+	phantom = ct_phantom(material.name, n, 1, 'Air')
+	sinogram_air = ct_scan(photons, material, phantom, scale, 1)
+	sinogram_air = sinogram_air[0][0]
+	mean_scatter = scatterfrac * sinogram_air
+
+	sinogram += np.random.poisson(mean_scatter) + np.random.poisson(backgroundrate * scale ** 2)
+	
 	# convert detector values into calibrated attenuation values
 	sinogram_attenuation = ct_calibrate(photons, material, sinogram, scale)
 	# Ram-Lak

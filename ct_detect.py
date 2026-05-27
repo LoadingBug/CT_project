@@ -58,13 +58,14 @@ def ct_detect(p, coeffs, thickness, mas=10000):
 	detector_photons = np.sum(detector_photons, axis=0)
 
 	# model noise
-	detector_photons *= mas # actual photons
-	detector_photons = np.random.normal(detector_photons, np.sqrt(detector_photons)) # quantum noise
-	detector_photons = detector_photons / mas
+	# Take max. photons as 8e+13, as air phantom with fake_source 100kVp, mas = 10000, gives 4e+13 photons
+	# Digital readout of 12 bits
+	s = 8e+13 / (2**24) 
 
-
-
-	# minimum detection is one photon
-	detector_photons = np.clip(detector_photons, 1, None)
+	detector_photons *=  mas / s # actual photons
+	detector_photons = np.random.poisson(detector_photons) # quantum noise, normal approximation of poisson
+	detector_photons = np.clip(detector_photons, 1, 2**24)
+	detector_photons = detector_photons.astype(float)
+	detector_photons /= mas / s
 
 	return detector_photons
