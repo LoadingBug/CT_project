@@ -8,6 +8,19 @@ def draw(data, map='gray', caxis=None):
 	create_figure(data, map, caxis)
 	plt.show()
 
+def draw_explicit_window(data, c, w, map='gray'):
+    """Draw an image by explicitly applying the brightness function to the array."""
+    
+    # Apply the brightness formula
+    windowed_data = 128 * (data - c) / w + 128
+    
+    # Clip values outside the 0-255 brightness range so they don't loop or overflow
+    windowed_data = np.clip(windowed_data, 0, 255)
+    
+    # Draw the data (caxis is fixed to 0-255 since we already scaled the data)
+    create_figure(windowed_data, map, caxis=[0, 255])
+    plt.show()
+	
 def plot(data, x=None, title=None, xlabel=None, ylabel=None, xlim=None, ylim=None):
 	"""plot a graph"""
 	if x is None:
@@ -103,3 +116,66 @@ def create_figure(data, map, caxis=None, title=None):
 
 	#add colorbar
 	plt.colorbar(im, orientation='vertical')
+
+def plot_histogram(data, bins=256, title="Attenuation Histogram", xlabel="Attenuation Value", ylabel="Frequency", xlim=None, ylim=None):
+
+	height, width = data.shape
+    
+	center_x = width // 2
+	center_y = height // 2
+	radius = center_x
+
+	Y, X = np.ogrid[:height, :width]
+	distance_from_center_squared = (X - center_x)**2 + (Y - center_y)**2
+	circular_mask = distance_from_center_squared <= radius**2
+    
+	flattened_data = data[circular_mask]
+    
+	plt.hist(flattened_data, bins=bins, color='gray', edgecolor='black', alpha=0.7)
+    
+	if title is not None:
+		plt.title(title)
+	if xlabel is not None:
+		plt.xlabel(xlabel)
+	if ylabel is not None:
+		plt.ylabel(ylabel)
+	if xlim is not None:
+		plt.xlim(xlim[0], xlim[1])
+	if ylim is not None:
+		plt.ylim(ylim[0], ylim[1])
+        
+	plt.show()
+
+def save_histogram(data, storage_directory, file_name, bins=256, title="Attenuation Histogram", xlabel="Attenuation Value", ylabel="Frequency", xlim=None, ylim=None):
+	"""
+	Creates and saves a frequency-attenuation plot (histogram) for a given scan.
+	"""
+	full_path = get_full_path(storage_directory, file_name)
+
+	height, width = data.shape
+    
+	center_x = width // 2
+	center_y = height // 2
+	radius = center_x
+
+	Y, X = np.ogrid[:height, :width]
+	distance_from_center_squared = (X - center_x)**2 + (Y - center_y)**2
+	circular_mask = distance_from_center_squared <= radius**2
+    
+	flattened_data = data[circular_mask]
+    
+	plt.hist(flattened_data, bins=bins, color='gray', edgecolor='black', alpha=0.7)
+    
+	if title is not None:
+		plt.title(title)
+	if xlabel is not None:
+		plt.xlabel(xlabel)
+	if ylabel is not None:
+		plt.ylabel(ylabel)
+	if xlim is not None:
+		plt.xlim(xlim[0], xlim[1])
+	if ylim is not None:
+		plt.ylim(ylim[0], ylim[1])
+        
+	plt.savefig(full_path)
+	plt.close()
