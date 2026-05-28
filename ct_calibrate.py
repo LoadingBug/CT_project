@@ -27,7 +27,7 @@ def ct_calibrate(photons, material, sinogram, scale, correct_beam_hardening=True
     phantom = ct_phantom(material.name, n, 1, 'Air')
     sinogram_air = ct_scan(photons, material, phantom, scale, 1)
     
-    sinogram_air = sinogram_air[0][0]
+    sinogram_air = np.mean(sinogram_air[0])
 
     sinogram_ratio = np.maximum(sinogram / sinogram_air, 1e-10)
     p_m = -np.log(sinogram_ratio)

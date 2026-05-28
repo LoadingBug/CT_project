@@ -57,9 +57,4 @@ def ct_detect(p, coeffs, thickness, mas=10000):
 	# sum this over energies
 	detector_photons = np.sum(detector_photons, axis=0)
 
-	# model noise
-
-	# minimum detection is one photon
-	detector_photons = np.clip(detector_photons, 1, None)
-
 	return detector_photons

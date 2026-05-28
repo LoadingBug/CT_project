@@ -60,11 +60,14 @@ def test_3():
 	# how to check whether these results are actually correct?
 
 def test():
-    p = ct_phantom(material.name, 256, 3, 'Water')
-    y = ct_scan(source.photon('100kVp, 2mm Al'), material, p, 0.1, 256)
-    sinogram = ct_calibrate(source.photon('100kVp, 2mm Al'), material, y, 0.1)
+	M = ct_phantom(material.name, 256, 3,'Soft Tissue')
+	ct = scan_and_reconstruct(source.photon('80kVp, 2mm Al'), material, M, 0.1, 256, alpha=2.5)
+	save_draw(ct, 'results/section_3', ".png")
 
-    save_draw(sinogram, 'results', 'sinogram_hip')
+	# Noisy water disk scan
+    # p = ct_phantom(material.name, 256, 1, 'Water')
+    # y = scan_and_reconstruct(source.photon('100kVp, 2mm Al'), material, p, 0.1, 256)
+    # save_draw(y, 'results', 'recon_no_filt_disk_noisy')
 
 # Run the various tests
 # print('Test 1')
@@ -74,5 +77,5 @@ def test():
 # print('Test 3')
 # test_3()
 
-print('Test')
-test()
+# print('Test')
+# test()
