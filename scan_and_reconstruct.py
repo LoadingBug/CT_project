@@ -5,7 +5,7 @@ from ramp_filter import *
 from back_project import *
 from hu import *
 
-def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, alpha=0.001, scatterfrac = 0.001, backgroundrate = 1000.0):
+def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, alpha=0.001, scatterfrac = 0.0, backgroundrate = 00.0):
 
 	""" Simulation of the CT scanning process
 		reconstruction = scan_and_reconstruct(photons, material, phantom, scale, angles, mas, alpha)
@@ -34,7 +34,7 @@ def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, a
 	# Ram-Lak
 	fs = ramp_filter(sinogram_attenuation, scale, alpha)
 	# Back-projection
-	reconstruction = back_project(fs)
+	reconstruction = back_project(fs, order = 1)
 	# convert to Hounsfield Units
 	reconstruction = hu(photons, material, reconstruction, scale)
 	return reconstruction 
