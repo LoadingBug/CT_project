@@ -5,7 +5,12 @@ from ramp_filter import *
 from back_project import *
 from hu import *
 
+<<<<<<< HEAD
 def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, alpha=0.001, scatterfrac = 0.0, backgroundrate = 00.0):
+=======
+def scan_and_reconstruct(photons, material, phantom, scale,
+                         angles, correct_beam_hardening=True, mas=10000, alpha=0.001):
+>>>>>>> chloely
 
 	""" Simulation of the CT scanning process
 		reconstruction = scan_and_reconstruct(photons, material, phantom, scale, angles, mas, alpha)
@@ -21,11 +26,16 @@ def scan_and_reconstruct(photons, material, phantom, scale, angles, mas=10000, a
 	# create sinogram from phantom data, with received detector values
 	sinogram = ct_scan(photons, material, phantom, scale, angles)
 
+<<<<<<< HEAD
 	n = sinogram.shape[1]
 	phantom = ct_phantom(material.name, n, 1, 'Air')
 	sinogram_air = ct_scan(photons, material, phantom, scale, 1)
 	sinogram_air = np.mean(sinogram_air[0])
 	mean_scatter = scatterfrac * sinogram_air
+=======
+	# convert detector values into calibrated attenuation values
+	cal = ct_calibrate(photons, material, scan, scale, correct_beam_hardening)
+>>>>>>> chloely
 
 	sinogram += np.random.poisson(mean_scatter) + np.random.poisson(backgroundrate * scale ** 2)
 	
