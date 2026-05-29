@@ -1,6 +1,6 @@
 gg2.venv/
 ct_test/
-ct_test/
 __pycache__/
 *.pyc
 .DS_Store
+results/
